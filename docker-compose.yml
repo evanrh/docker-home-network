@@ -9,14 +9,14 @@ services:
       - 53:53/tcp
       - 53:53/udp
     environment:
-      - DHCP_ACTIVE=false
-      - DHCP_IPV6=false
-      - DNSSEC=true
-      - DNSMASQ_LISTENING=all
-      - PIHOLE_DNS_=unbound#5335
-      - WEBPASSWORD=pihole-admin
-      - TEMPERATUREUNIT=f
-      - TZ=America/New_York
+      DHCP_ACTIVE: false
+      DHCP_IPV6: false
+      DNSSEC: true
+      DNSMASQ_LISTENING: all
+      PIHOLE_DNS_: unbound#53
+      WEBPASSWORD: pihole-admin
+      TEMPERATUREUNIT: f
+      TZ: America/New_York
     depends_on:
       - unbound
       - traefik
@@ -27,11 +27,9 @@ services:
       - traefik.http.services.pihole.loadbalancer.server.port=80
     restart: unless-stopped
   unbound:
-    image: alpinelinux/unbound
+    image: mvance/unbound
     networks:
       - pihole-dns
-    volumes:
-      - ./config/unbound.conf:/etc/unbound/unbound.conf:ro
     restart: unless-stopped
   traefik:
     image: traefik
