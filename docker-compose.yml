@@ -21,10 +21,10 @@ services:
       - unbound
       - traefik
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.pihole.rule=Host(`pihole.docker.localhost`)
-      - traefik.http.routers.pihole.entrypoints=web
-      - traefik.http.services.pihole.loadbalancer.server.port=80
+      traefik.enable: true
+      traefik.http.routers.pihole.rule: Host(`pihole.docker.localhost`)
+      traefik.http.routers.pihole.entrypoints: web
+      traefik.http.services.pihole.loadbalancer.server.port: 80
     restart: unless-stopped
   unbound:
     image: mvance/unbound
@@ -47,11 +47,25 @@ services:
     networks:
       - internal
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)
-      - traefik.http.routers.whoami.entrypoints=web
+      traefik.enable: true
+      traefik.http.routers.whoami.rule: Host(`whoami.docker.localhost`)
+      traefik.http.routers.whoami.entrypoints: web
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    networks:
+      - internal
+    volumes:
+      - uptime-kuma:/app/data
+    labels:
+      traefik.enable: true
+      traefik.http.routers.uptime-kuma.rule: Host(`monitor.docker.localhost`)
+      traefik.http.services.uptime-kuma.loadbalancer.server.port: 3001
+      traefik.http.routers.uptime-kuma.entrypoints: web
 networks:
   pihole-dns:
     name: pihole-dns
   internal:
     name: internal
+volumes:
+  uptime-kuma:
