@@ -17,6 +17,9 @@ services:
       WEBPASSWORD: pihole-admin
       TEMPERATUREUNIT: f
       TZ: America/New_York
+    volumes:
+      - ./data/pihole:/etc/pihole
+      - ./data/dnsmasq.d:/etc/dnsmasq.d
     depends_on:
       - unbound
       - traefik
@@ -31,6 +34,8 @@ services:
     networks:
       - pihole-dns
     restart: unless-stopped
+    volumes:
+      - ./config/unbound.conf:/opt/unbound/etc/unbound.conf
   traefik:
     image: traefik
     networks:
@@ -44,6 +49,7 @@ services:
     restart: unless-stopped
   whoami:
     image: traefik/whoami
+    restart: unless-stopped
     networks:
       - internal
     labels:
