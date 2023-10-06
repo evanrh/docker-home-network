@@ -1,5 +1,7 @@
 version: '3.4'
 services:
+
+  # DNS and Adblocking
   pihole:
     image: pihole/pihole
     networks:
@@ -14,7 +16,7 @@ services:
       DNSSEC: true
       DNSMASQ_LISTENING: all
       PIHOLE_DNS_: unbound#53
-      WEBPASSWORD: pihole-admin
+      WEBPASSWORD: ${PIHOLE_PASS:-admin}
       TEMPERATUREUNIT: f
       TZ: America/New_York
     volumes:
@@ -25,10 +27,12 @@ services:
       - traefik
     labels:
       traefik.enable: true
-      traefik.http.routers.pihole.rule: Host(`pihole.docker.localhost`)
+      traefik.http.routers.pihole.rule: Host(`pihole.${HOST}`)
       traefik.http.routers.pihole.entrypoints: web
       traefik.http.services.pihole.loadbalancer.server.port: 80
     restart: unless-stopped
+
+  # Recursive DNS Resolution
   unbound:
     image: mvance/unbound
     networks:
@@ -47,6 +51,8 @@ services:
       - ./config/traefik.yml:/etc/traefik/traefik.yml
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+
+  # Smoke test container
   whoami:
     image: traefik/whoami
     restart: unless-stopped
@@ -54,18 +60,20 @@ services:
       - internal
     labels:
       traefik.enable: true
-      traefik.http.routers.whoami.rule: Host(`whoami.docker.localhost`)
+      traefik.http.routers.whoami.rule: Host(`whoami.${HOST}`)
       traefik.http.routers.whoami.entrypoints: web
+  
+  # Monitoring
   uptime-kuma:
     image: louislam/uptime-kuma:1
     container_name: uptime-kuma
     networks:
       - internal
     volumes:
-      - uptime-kuma:/app/data
+      - ./data/uptime-kuma:/app/data
     labels:
       traefik.enable: true
-      traefik.http.routers.uptime-kuma.rule: Host(`monitor.docker.localhost`)
+      traefik.http.routers.uptime-kuma.rule: Host(`monitor.${HOST}`)
       traefik.http.services.uptime-kuma.loadbalancer.server.port: 3001
       traefik.http.routers.uptime-kuma.entrypoints: web
 networks:
