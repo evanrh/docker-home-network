@@ -75,6 +75,7 @@ services:
       - internal
     volumes:
       - ./data/uptime-kuma:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
     labels:
       traefik.enable: true
       traefik.http.routers.uptime-kuma.rule: Host(`monitor.${HOST}`)
