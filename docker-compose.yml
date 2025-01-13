@@ -1,4 +1,3 @@
-version: '3.4'
 services:
 
   # DNS and Adblocking
@@ -35,7 +34,7 @@ services:
 
   # Recursive DNS Resolution
   unbound:
-    image: mvance/unbound
+    image: mvance/unbound-rpi
     networks:
       - pihole-dns
     restart: unless-stopped
@@ -69,7 +68,7 @@ services:
   
   # Monitoring
   uptime-kuma:
-    image: louislam/uptime-kuma:1
+    image: louislam/uptime-kuma:1-alpine
     container_name: uptime-kuma
     networks:
       - internal
@@ -108,7 +107,20 @@ services:
       traefik.http.routers.wg-easy.rule: Host(`vpn.${HOST}`)
       traefik.http.services.wg-easy.loadbalancer.server.port: 51821
       traefik.http.routers.wg-easy.entrypoints: web
-  
+
+  finances:
+    image: actualbudget/actual-server:latest-alpine
+    container_name: finance_manager
+    networks:
+      internal:
+        ipv4_address: 10.8.1.4
+    volumes:
+      - ./data/finances:/data
+    labels:
+      traefik.enable: true
+      traefik.http.routers.finances.rule: Host(`finances.${HOST}`)
+      traefik.http.services.finances.loadbalancer.server.port: 5006
+      traefik.http.routers.finances.entrypoints: web
 networks:
   pihole-dns:
     name: pihole-dns
@@ -117,6 +129,6 @@ networks:
     ipam:
       config:
         - subnet: 10.8.1.0/24
-          ip_range: 10.8.1.17/28
+          ip_range: 10.8.1.16/28
 volumes:
   uptime-kuma:
