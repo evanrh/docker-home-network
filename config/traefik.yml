@@ -1,3 +1,4 @@
+# yaml-language-server $schema=https://json.schemastore.org/traefik-v3.json
 providers:
   docker:
     defaultRule: "Host(`{{ trimPrefix `/` .Name }}.docker.localhost`)"
@@ -14,6 +15,10 @@ entrypoints:
           permanent: true
   web-secure:
     address: :443
-
 api:
   insecure: true
+
+certificatesResolvers:
+  main:
+    acme:
+      tlsChallenge: {}

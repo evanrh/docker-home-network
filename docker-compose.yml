@@ -55,6 +55,7 @@ services:
     volumes:
       - ./config/traefik.yml:/etc/traefik/traefik.yml
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./letsencrypt:/letsencrypt
     restart: unless-stopped
 
   # Smoke test container
@@ -126,7 +127,8 @@ services:
       traefik.http.routers.finances.rule: Host(`finances.${HOST}`)
       traefik.http.services.finances.loadbalancer.server.port: 5006
       traefik.http.routers.finances.entrypoints: web-secure
-      traefik.http.routers.finances.tls:
+      traefik.http.routers.finances.tls: true
+      traefik.http.routers.finances.tls.certresolver: main
 networks:
   pihole-dns:
     name: pihole-dns
