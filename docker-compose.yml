@@ -13,7 +13,7 @@ services:
     environment:
       DHCP_ACTIVE: false
       DHCP_IPV6: false
-      DNSSEC: true
+      DNSSEC: false
       DNSMASQ_LISTENING: all
       PIHOLE_DNS_: unbound#53
       WEBPASSWORD: ${PIHOLE_PASS:-admin}
