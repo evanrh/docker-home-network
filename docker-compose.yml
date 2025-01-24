@@ -52,6 +52,9 @@ services:
       - 80:80
       - 8080:8080
       - 443:443
+    environment:
+      CF_API_EMAIL: ${CF_API_EMAIL}
+      CF_API_KEY: ${CF_API_KEY}
     volumes:
       - ./config/traefik.yml:/etc/traefik/traefik.yml
       - /var/run/docker.sock:/var/run/docker.sock
